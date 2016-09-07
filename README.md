@@ -1,5 +1,5 @@
-# MVPTemplate
-Simple Generator Model View Present 
+# MVPBaseActivityTemplate
+Simple Generator Model View Present based on library https://github.com/derohimat/android-base-mvp
 
 Installation
 -
@@ -16,6 +16,7 @@ Usage
 	- Select the styles/layout you want in your application
 	- Click **Finish**
  
-- After Activity Created
+- 
+	- After Activity Created
 	- Register Activity to ActivityComponent
 	- Register Presenter to ApplicationComponent
