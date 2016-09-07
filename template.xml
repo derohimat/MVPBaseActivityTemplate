@@ -2,10 +2,10 @@
 <template
     format="3"
     revision="4"
-    name="VIP Activity"
+    name="MVP Base Activity"
     minApi="7"
     minBuildApi="14"
-    description="Creates a VIP activity">
+    description="Creates a MVP activity based on library https://github.com/derohimat/android-base-mvp">
 
     <category value="Activity" />
     <formfactor value="Mobile" />

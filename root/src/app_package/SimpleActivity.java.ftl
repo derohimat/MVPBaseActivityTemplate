@@ -1,31 +1,92 @@
 package ${packageName};
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import javax.inject.Inject;
+
 <#if applicationPackage??>import ${applicationPackage}.R;</#if>
-import android.util.Log;
 
-public class ${activityClass} extends AppCompatActivity implements ${activityClass}Output {
+public class ${activityClass} extends BaseActivity implements ${activityClass}MvpView {
 
-    public ${activityClass}Input input;
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    private ${activityClass}Presenter mPresenter;
+    private static ProgressBar mProgressBar = null;
+	
+	@Inject
+    EventBus eventBus;
+	
+	@Override
+    protected int getResourceLayout() {
+        return R.layout.${layoutName};
+    }
+	
+	@Override
+    protected void onViewReady(Bundle savedInstanceState) {
+        mPresenter = new ${activityClass}Presenter(this);
+        mPresenter.attachView(this);
+		
+		mPresenter.doSomething(${activityClass}.class.getSimpleName() + " Created");
+	}
+	
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.${layoutName});
-        ${activityClass}Configure.getInstance().config(this);
-        doSomething();
+        getComponent().inject(this);
+    }
+	
+	@Override
+    public void onStart() {
+        super.onStart();
+        eventBus.register(this);
     }
 
-    private void doSomething(){
-        input.doSomething("this","input");
-    } 
     @Override
-    public void displaySomething(${activityClass}Model response){
-        Log.d("RESULT","RESULT");    
+    public void onStop() {
+        eventBus.unregister(this);
+        super.onStop();
     }
 
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+    }
+	
+	@Subscribe
+    public void onEvent(${activityClass}Event event) {
+        if (event.isSuccess()) {
+            Toast.makeText(mContext, event.getMessage(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mContext, event.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+	
+	@Override
+    protected void onDestroy() {
+        mPresenter.detachView();
+        super.onDestroy();
+    }
+	
+	@Override
+    public void showProgress() {
+        if (mProgressBar == null) {
+            mProgressBar = new ProgressBar(getContext(), null, android.R.attr.progressBarStyleLarge);
+			mProgressBar.setIndeterminate(true);
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
+	
+	@Override
+    public void hideProgress() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+	
+	@Override
+    public Context getContext() {
+        return this;
+    }
 }
